@@ -6,7 +6,7 @@ import cv2
 app = Flask(__name__)
 
 # Load trained model
-model = tf.keras.models.load_model('models/cnn_model.h5')
+model = tf.keras.models.load_model("../models/cnn_model.h5")
 
 # Class names (ORDER MUST MATCH DATASET)
 CLASS_NAMES = [
