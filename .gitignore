@@ -59,3 +59,10 @@ data/
 *.jpg
 *.png
 *.jpeg
+
+*.h5
+models/*.h5
+venv/
+data/raw/
+__pycache__/
+
