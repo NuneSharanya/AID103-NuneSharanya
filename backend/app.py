@@ -4,7 +4,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import os
-
+from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)   # 🔴 REQUIRED for frontend access
 
