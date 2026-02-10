@@ -2,20 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CropGuard AI – Civora Nexus</title>
+    <title>CropGuard AI </title>
     <style>
         body {
             margin: 0;
             font-family: "Segoe UI", Arial, sans-serif;
+            background-image:url("137521.jpg");
             background-color: #f4f6fb;
+            background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+        .card {
+             background: rgba(255, 255, 255, 0.85); /* transparent white */
+            width: 420px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            backdrop-filter: blur(6px); /* glass effect */
+}
+        button:hover {
+         background-color: #178740;
+        transform: scale(1.02);
+        }
+
 
         .card {
-            background: #ffffff;
+            background: #ffffffe0;
             width: 420px;
             padding: 30px;
             border-radius: 10px;
@@ -29,7 +46,7 @@
 
         .header h1 {
             margin: 0;
-            color: #1f3c88;
+            color: #178740;
             font-size: 24px;
         }
 
@@ -46,7 +63,7 @@
         button {
             width: 100%;
             padding: 12px;
-            background-color: #1f3c88;
+            background-color: #178740;
             color: white;
             border: none;
             border-radius: 6px;
@@ -55,7 +72,7 @@
         }
 
         button:hover {
-            background-color: #162f6a;
+            background-color: #178740;
         }
 
         .result {
@@ -72,19 +89,20 @@
         }
 
         .footer {
-            margin-top: 20px;
-            text-align: center;
+            margin-top: 15px;
+             text-align: center;
             font-size: 12px;
-            color: #888;
+            color: #666;
         }
+
     </style>
 </head>
 <body>
 
 <div class="card">
     <div class="header">
-        <h1>CropGuard AI</h1>
-        <p>Civora Nexus – AI Disease Detection System</p>
+        <h1>🌱CropGuard AI</h1>
+        <p>AI Disease Detection System</p>
     </div>
 
     <input type="file" id="imageInput" accept="image/*">
