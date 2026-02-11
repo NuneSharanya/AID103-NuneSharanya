@@ -7,31 +7,33 @@ import os
 import gdown
 
 app = Flask(__name__)
+
+# ✅ Enable CORS for frontend
 CORS(app)
 
-# Base directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# ===============================
+# Model Setup
+# ===============================
 
-# Model will be saved directly inside backend folder
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "cnn_model.h5")
 
-# 🔥 Google Drive File ID (PUT YOUR FILE ID HERE)
-FILE_ID = "YOUR_FILE_ID_HERE"
-
-# Download model if not present
-# Download model if not present
+# Download model if not exists
 if not os.path.exists(MODEL_PATH):
     print("Downloading model from Google Drive...")
     FILE_ID = "1GVuVLtX3Bp4KTEmx1Y4EXaVlApktd2QB"
     url = f"https://drive.google.com/uc?id={FILE_ID}"
     gdown.download(url, MODEL_PATH, quiet=False)
 
-# Load model safely
 print("Loading model...")
 model = tf.keras.models.load_model(MODEL_PATH, compile=False)
 print("Model loaded successfully!")
 
-@app.route("/", methods=["GET"])
+# ===============================
+# Routes
+# ===============================
+
+@app.route("/")
 def home():
     return "CropGuard AI Backend Running"
 
@@ -66,6 +68,9 @@ def predict():
         "recommendation": "Apply appropriate treatment and monitor crop health."
     })
 
+# ===============================
+# Run
+# ===============================
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
