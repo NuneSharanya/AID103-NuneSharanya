@@ -19,9 +19,11 @@ MODEL_PATH = os.path.join(BASE_DIR, "cnn_model.h5")
 FILE_ID = "YOUR_FILE_ID_HERE"
 
 # Download model if not present
+# Download model if not present
 if not os.path.exists(MODEL_PATH):
     print("Downloading model from Google Drive...")
-    url = f"https://drive.google.com/file/d/1GVuVLtX3Bp4KTEmx1Y4EXaVlApktd2QB/view?usp=sharing"
+    FILE_ID = "1GVuVLtX3Bp4KTEmx1Y4EXaVlApktd2QB"
+    url = f"https://drive.google.com/uc?id={FILE_ID}"
     gdown.download(url, MODEL_PATH, quiet=False)
 
 # Load model safely
