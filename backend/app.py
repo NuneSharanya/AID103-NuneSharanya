@@ -4,18 +4,30 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import os
+import gdown
 
 app = Flask(__name__)
 CORS(app)
 
-# Load model safely using absolute path
+# Base directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-MODEL_PATH = os.path.join(BASE_DIR, "models", "cnn_model.h5")
+# Model will be saved directly inside backend folder
+MODEL_PATH = os.path.join(BASE_DIR, "cnn_model.h5")
 
+# 🔥 Google Drive File ID (PUT YOUR FILE ID HERE)
+FILE_ID = "YOUR_FILE_ID_HERE"
 
-# ✅ SAFE LOAD
+# Download model if not present
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model from Google Drive...")
+    url = f"https://drive.google.com/file/d/1GVuVLtX3Bp4KTEmx1Y4EXaVlApktd2QB/view?usp=sharing"
+    gdown.download(url, MODEL_PATH, quiet=False)
+
+# Load model safely
+print("Loading model...")
 model = tf.keras.models.load_model(MODEL_PATH, compile=False)
+print("Model loaded successfully!")
 
 @app.route("/", methods=["GET"])
 def home():
@@ -39,7 +51,6 @@ def predict():
     confidence = float(np.max(preds[0])) * 100
     class_index = int(np.argmax(preds[0]))
 
-    # 🔒 Confidence threshold check
     if confidence < 60:
         return jsonify({
             "disease": "Invalid or unclear image",
