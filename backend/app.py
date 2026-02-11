@@ -10,7 +10,9 @@ CORS(app)
 
 # Load model safely using absolute path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "..", "models", "cnn_model.h5")
+
+MODEL_PATH = os.path.join(BASE_DIR, "models", "cnn_model.h5")
+
 
 # ✅ SAFE LOAD
 model = tf.keras.models.load_model(MODEL_PATH, compile=False)
