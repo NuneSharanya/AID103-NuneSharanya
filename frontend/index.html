@@ -2,41 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CropGuard AI </title>
+    <title>CropGuard AI</title>
     <style>
         body {
             margin: 0;
             font-family: "Segoe UI", Arial, sans-serif;
-            background-image:url("137521.jpg");
-            background-color: #f4f6fb;
+            background-image: url("137521.jpg");
             background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+            background-position: center;
+            background-repeat: no-repeat;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+
         .card {
-             background: rgba(255, 255, 255, 0.85); /* transparent white */
+            background: rgba(255, 255, 255, 0.92);
             width: 420px;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-            backdrop-filter: blur(6px); /* glass effect */
-}
-        button:hover {
-         background-color: #178740;
-        transform: scale(1.02);
-        }
-
-
-        .card {
-            background: #ffffffe0;
-            width: 420px;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         }
 
         .header {
@@ -72,7 +58,7 @@
         }
 
         button:hover {
-            background-color: #178740;
+            transform: scale(1.02);
         }
 
         .result {
@@ -84,24 +70,20 @@
             font-size: 14px;
         }
 
-        .result p {
-            margin: 6px 0;
-        }
-
         .footer {
             margin-top: 15px;
-             text-align: center;
+            text-align: center;
             font-size: 12px;
             color: #666;
         }
-
     </style>
 </head>
+
 <body>
 
 <div class="card">
     <div class="header">
-        <h1>🌱CropGuard AI</h1>
+        <h1>🌱 CropGuard AI</h1>
         <p>AI Disease Detection System</p>
     </div>
 
@@ -122,6 +104,7 @@
 <script>
     function analyzeCrop() {
         const input = document.getElementById("imageInput");
+
         if (!input.files.length) {
             alert("Please select an image.");
             return;
@@ -130,21 +113,23 @@
         const formData = new FormData();
         formData.append("file", input.files[0]);
 
-        fetch("http://127.0.0.1:5000/predict", {
+        fetch("https://aid103-nunesharanya-3.onrender.com/predict", {
             method: "POST",
             body: formData
         })
-        .then(res => res.json())
+        .then(response => response.json())
         .then(data => {
             document.getElementById("resultBox").style.display = "block";
             document.getElementById("disease").innerText = data.disease;
             document.getElementById("confidence").innerText = data.confidence;
             document.getElementById("recommendation").innerText = data.recommendation;
         })
-        .catch(() => alert("Backend not reachable"));
+        .catch(error => {
+            alert("Backend not reachable");
+            console.error(error);
+        });
     }
 </script>
 
 </body>
 </html>
-
