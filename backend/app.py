@@ -7,18 +7,7 @@ import os
 import gdown
 
 app = Flask(__name__)
-
-# ✅ Enable CORS for frontend
-CORS(app, resources={
-    r"/*": {
-        "origins": [
-            "https://aid103-nunesharanya-4.onrender.com",
-            "http://localhost:5500",
-            "http://127.0.0.1:5500"
-        ]
-    }
-})
-
+CORS(app)  # allow all origins for now
 
 # ===============================
 # Model Setup
@@ -27,61 +16,74 @@ CORS(app, resources={
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "cnn_model.h5")
 
-# Download model if not exists
+# Download model if missing
 if not os.path.exists(MODEL_PATH):
-    print("Downloading model from Google Drive...")
+    print("⬇️ Downloading model from Google Drive...")
     FILE_ID = "1GVuVLtX3Bp4KTEmx1Y4EXaVlApktd2QB"
     url = f"https://drive.google.com/uc?id={FILE_ID}"
     gdown.download(url, MODEL_PATH, quiet=False)
 
-print("Loading model...")
+print("📦 Loading model...")
 model = tf.keras.models.load_model(MODEL_PATH, compile=False)
-print("Model loaded successfully!")
+print("✅ Model loaded successfully")
 
 # ===============================
 # Routes
 # ===============================
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def home():
-    return "CropGuard AI Backend Running"
+    return jsonify({"status": "CropGuard AI Backend Running"})
 
-@app.route("/predict", methods=["POST", "GET"])
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"})
+
+@app.route("/predict", methods=["POST"])
 def predict():
-    if request.method == "GET":
+    try:
+        if "file" not in request.files:
+            return jsonify({"error": "No file uploaded"}), 400
+
+        file = request.files["file"]
+
+        if file.filename == "":
+            return jsonify({"error": "Empty filename"}), 400
+
+        # Preprocess image
+        img = Image.open(file).convert("RGB")
+        img = img.resize((224, 224))
+        img_array = np.array(img, dtype=np.float32) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+
+        # Predict
+        preds = model.predict(img_array)
+        confidence = float(np.max(preds[0])) * 100
+        class_index = int(np.argmax(preds[0]))
+
+        if confidence < 60:
+            return jsonify({
+                "disease": "Unclear image",
+                "confidence": f"{confidence:.2f}%",
+                "recommendation": "Upload a clear crop leaf image"
+            })
+
         return jsonify({
-            "message": "Use POST method with an image file"
-        }), 200
-
-    file = request.files["file"]
-
-    # Preprocess image
-    img = Image.open(file).convert("RGB")
-    img = img.resize((224, 224))
-    img_array = np.array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
-
-    # Predict
-    preds = model.predict(img_array)
-    confidence = float(np.max(preds[0])) * 100
-    class_index = int(np.argmax(preds[0]))
-
-    if confidence < 60:
-        return jsonify({
-            "disease": "Invalid or unclear image",
+            "disease": f"Class {class_index}",
             "confidence": f"{confidence:.2f}%",
-            "recommendation": "Please upload a clear crop leaf image."
+            "recommendation": "Apply appropriate treatment and mointor crop health regularly"
         })
 
-    return jsonify({
-        "disease": f"Class {class_index}",
-        "confidence": f"{confidence:.2f}%",
-        "recommendation": "Apply appropriate treatment and monitor crop health."
-    })
+    except Exception as e:
+        print("❌ Prediction error:", e)
+        return jsonify({
+            "error": "Prediction failed",
+            "details": str(e)
+        }), 500
 
 # ===============================
 # Run
 # ===============================
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(host="0.0.0.0", port=5000, debug=True)

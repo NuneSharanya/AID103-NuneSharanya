@@ -1,3 +1,9 @@
+venv/
+tvenv/
+backend/venv/
+__pycache__/
+*.pyc
+
 # ===============================
 # Python cache & compiled files
 # ===============================
