@@ -113,22 +113,41 @@ async function analyzeCrop() {
     const formData = new FormData();
     formData.append("file", input.files[0]);
 
-        fetch("https://aid103-nunesharanya-3.onrender.com/predict", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("resultBox").style.display = "block";
-            document.getElementById("disease").innerText = data.disease;
-            document.getElementById("confidence").innerText = data.confidence;
-            document.getElementById("recommendation").innerText = data.recommendation;
-        })
-        .catch(error => {
-            alert("Backend not reachable");
-            console.error(error);
-        });
+    // UI feedback
+    document.getElementById("resultBox").style.display = "block";
+    document.getElementById("disease").innerText = "Processing...";
+    document.getElementById("confidence").innerText = "";
+    document.getElementById("recommendation").innerText = "";
+
+    try {
+        const response = await fetch(
+            "https://aid103-nunesharanya-3.onrender.com/predict",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Server error: " + response.status);
+        }
+
+        const data = await response.json();
+
+        document.getElementById("disease").innerText = data.disease || "N/A";
+        document.getElementById("confidence").innerText = data.confidence || "N/A";
+        document.getElementById("recommendation").innerText =
+            data.recommendation || "No recommendation";
+
+    } catch (error) {
+        document.getElementById("disease").innerText = "Backend error";
+        document.getElementById("confidence").innerText = "-";
+        document.getElementById("recommendation").innerText =
+            "Backend may be restarting or out of memory";
+
+        console.error(error);
     }
+}
 </script>
 
 
