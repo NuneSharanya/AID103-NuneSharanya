@@ -9,7 +9,16 @@ import gdown
 app = Flask(__name__)
 
 # ✅ Enable CORS for frontend
-CORS(app)
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "https://aid103-nunesharanya-4.onrender.com",
+            "http://localhost:5500",
+            "http://127.0.0.1:5500"
+        ]
+    }
+})
+
 
 # ===============================
 # Model Setup
@@ -37,10 +46,12 @@ print("Model loaded successfully!")
 def home():
     return "CropGuard AI Backend Running"
 
-@app.route("/predict", methods=["POST"])
+@app.route("/predict", methods=["POST", "GET"])
 def predict():
-    if "file" not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
+    if request.method == "GET":
+        return jsonify({
+            "message": "Use POST method with an image file"
+        }), 200
 
     file = request.files["file"]
 
